@@ -16,8 +16,8 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -33,19 +33,21 @@
 #include "usb_type.h"
 #include "stm32f30x.h"
 
-
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported define -----------------------------------------------------------*/
 #define CURSOR_STEP     20
-
 #define DOWN            1
 #define LEFT            2
 #define RIGHT           3
 #define UP              4
 
+#define USART_RX_DATA_SIZE   2048
 
+#define         ID1          (0x1FFFF7AC)
+#define         ID2          (0x1FFFF7B0)
+#define         ID3          (0x1FFFF7B4)
 
 /* Exported functions ------------------------------------------------------- */
 void Set_System(void);
@@ -55,11 +57,10 @@ void Enter_LowPowerMode(void);
 void Leave_LowPowerMode(void);
 void USB_Interrupts_Config(void);
 void USB_Cable_Config (FunctionalState NewState);
-void Joystick_Send(uint8_t Keys);
-uint8_t JoyState(void);
 void Get_SerialNum(void);
-
+uint32_t CDC_Send_DATA (uint8_t *ptrBuffer, uint8_t Send_length);
+uint32_t CDC_Receive_DATA(void);
+/* External variables --------------------------------------------------------*/
 
 #endif  /*__HW_CONFIG_H*/
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/ 
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

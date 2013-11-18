@@ -5,7 +5,7 @@
   * @version V1.0.0
   * @date    04-September-2012
   * @brief   This file contains all the functions prototypes for the operational
-  *          amplifiers (OPAMP) firmware library.         
+  *          amplifiers (OPAMP) firmware library.
   ******************************************************************************
   * @attention
   *
@@ -17,60 +17,60 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F30x_OPAMP_H
 #define __STM32F30x_OPAMP_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
+    /* Includes ------------------------------------------------------------------*/
 #include "stm32f30x.h"
 
-/** @addtogroup STM32F30x_StdPeriph_Driver
-  * @{
-  */
+    /** @addtogroup STM32F30x_StdPeriph_Driver
+      * @{
+      */
 
-/** @addtogroup OPAMP
-  * @{
-  */
+    /** @addtogroup OPAMP
+      * @{
+      */
 
-/* Exported types ------------------------------------------------------------*/
+    /* Exported types ------------------------------------------------------------*/
 
-/** 
-  * @brief  OPAMP Init structure definition  
-  */
-  
-typedef struct
-{
+    /**
+      * @brief  OPAMP Init structure definition
+      */
 
-  uint32_t OPAMP_InvertingInput;     /*!< Selects the inverting input of the operational amplifier.
+    typedef struct
+    {
+
+        uint32_t OPAMP_InvertingInput;     /*!< Selects the inverting input of the operational amplifier.
                                           This parameter can be a value of @ref OPAMP_InvertingInput */
 
-  uint32_t OPAMP_NonInvertingInput;  /*!< Selects the non inverting input of the operational amplifier.
+        uint32_t OPAMP_NonInvertingInput;  /*!< Selects the non inverting input of the operational amplifier.
                                          This parameter can be a value of @ref OPAMP_NonInvertingInput */
 
-}OPAMP_InitTypeDef;
+    } OPAMP_InitTypeDef;
 
-/* Exported constants --------------------------------------------------------*/
+    /* Exported constants --------------------------------------------------------*/
 
-/** @defgroup OPAMP_Exported_Constants
-  * @{
-  */ 
+    /** @defgroup OPAMP_Exported_Constants
+      * @{
+      */
 
-/** @defgroup OPAMP_Selection
-  * @{
-  */
+    /** @defgroup OPAMP_Selection
+      * @{
+      */
 
 #define OPAMP_Selection_OPAMP1                    ((uint32_t)0x00000000) /*!< OPAMP1 Selection */
 #define OPAMP_Selection_OPAMP2                    ((uint32_t)0x00000004) /*!< OPAMP2 Selection */
@@ -81,19 +81,19 @@ typedef struct
                                      ((PERIPH) == OPAMP_Selection_OPAMP2) || \
                                      ((PERIPH) == OPAMP_Selection_OPAMP3) || \
                                      ((PERIPH) == OPAMP_Selection_OPAMP4))
- 
-/**
-  * @}
-  */
 
-/** @defgroup OPAMP_InvertingInput
-  * @{
-  */
+    /**
+      * @}
+      */
+
+    /** @defgroup OPAMP_InvertingInput
+      * @{
+      */
 
 #define OPAMP_InvertingInput_IO1          ((uint32_t)0x00000000) /*!< IO1 (PC5 for OPAMP1 and OPAMP2, PB10 for OPAMP3 and OPAMP4)
-                                                                     connected to OPAMPx inverting input */
+    connected to OPAMPx inverting input */
 #define OPAMP_InvertingInput_IO2          OPAMP_CSR_VMSEL_0      /*!< IO2 (PA3 for OPAMP1, PA5 for OPAMP2, PB2 for OPAMP3, PD8 for OPAMP4)
-                                                                      connected to OPAMPx inverting input */
+    connected to OPAMPx inverting input */
 #define OPAMP_InvertingInput_PGA          OPAMP_CSR_VMSEL_1      /*!< Resistor feedback output connected to OPAMPx inverting input (PGA mode) */
 #define OPAMP_InvertingInput_Vout         OPAMP_CSR_VMSEL        /*!< Vout connected to OPAMPx inverting input (follower mode) */
 
@@ -101,34 +101,34 @@ typedef struct
                                          ((INPUT) == OPAMP_InvertingInput_IO2) || \
                                          ((INPUT) == OPAMP_InvertingInput_PGA) || \
                                          ((INPUT) == OPAMP_InvertingInput_Vout))
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_NonInvertingInput
-  * @{
-  */
+    /** @defgroup OPAMP_NonInvertingInput
+      * @{
+      */
 
 #define OPAMP_NonInvertingInput_IO1          ((uint32_t)0x00000000) /*!< IO1 (PA7 for OPAMP1, PD14 for OPAMP2, PB13 for OPAMP3, PD11 for OPAMP4)
-                                                                        connected to OPAMPx non inverting input */
+    connected to OPAMPx non inverting input */
 #define OPAMP_NonInvertingInput_IO2          OPAMP_CSR_VPSEL_0      /*!< IO2 (PA5 for OPAMP1, PB14 for OPAMP2, PA5 for OPAMP3, PB11 for OPAMP4)
-                                                                         connected to OPAMPx non inverting input */
+    connected to OPAMPx non inverting input */
 #define OPAMP_NonInvertingInput_IO3          OPAMP_CSR_VPSEL_1      /*!< IO3 (PA3 for OPAMP1, PB0 for OPAMP2, PA1 for OPAMP3, PA4 for OPAMP4)
-                                                                         connected to OPAMPx non inverting input */
+    connected to OPAMPx non inverting input */
 #define OPAMP_NonInvertingInput_IO4          OPAMP_CSR_VPSEL        /*!< IO4 (PA1 for OPAMP1, PA7 for OPAMP2, PB0 for OPAMP3, PB13 for OPAMP4)
-                                                                         connected to OPAMPx non inverting input */
+    connected to OPAMPx non inverting input */
 
 #define IS_OPAMP_NONINVERTING_INPUT(INPUT) (((INPUT) == OPAMP_NonInvertingInput_IO1) || \
                                             ((INPUT) == OPAMP_NonInvertingInput_IO2) || \
                                             ((INPUT) == OPAMP_NonInvertingInput_IO3) || \
                                             ((INPUT) == OPAMP_NonInvertingInput_IO4))
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_PGAGain_Config
-  * @{
-  */
+    /** @defgroup OPAMP_PGAGain_Config
+      * @{
+      */
 
 #define OPAMP_OPAMP_PGAGain_2                ((uint32_t)0x00000000)
 #define OPAMP_OPAMP_PGAGain_4                OPAMP_CSR_PGGAIN_0
@@ -139,13 +139,13 @@ typedef struct
                                 ((GAIN) == OPAMP_OPAMP_PGAGain_4) || \
                                 ((GAIN) == OPAMP_OPAMP_PGAGain_8) || \
                                 ((GAIN) == OPAMP_OPAMP_PGAGain_16))
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_PGAConnect_Config
-  * @{
-  */
+    /** @defgroup OPAMP_PGAConnect_Config
+      * @{
+      */
 
 #define OPAMP_PGAConnect_No                ((uint32_t)0x00000000)
 #define OPAMP_PGAConnect_IO1               OPAMP_CSR_PGGAIN_3
@@ -154,23 +154,23 @@ typedef struct
 #define IS_OPAMP_PGACONNECT(CONNECT) (((CONNECT) == OPAMP_PGAConnect_No)  || \
                                       ((CONNECT) == OPAMP_PGAConnect_IO1) || \
                                       ((CONNECT) == OPAMP_PGAConnect_IO2))
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_SecondaryInvertingInput
-  * @{
-  */
+    /** @defgroup OPAMP_SecondaryInvertingInput
+      * @{
+      */
 
 #define IS_OPAMP_SECONDARY_INVINPUT(INVINPUT) (((INVINPUT) == OPAMP_InvertingInput_IO1) || \
                                                ((INVINPUT) == OPAMP_InvertingInput_IO2))
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_Input
-  * @{
-  */
+    /** @defgroup OPAMP_Input
+      * @{
+      */
 
 #define OPAMP_Input_Inverting                 ((uint32_t)0x00000018) /*!< Inverting input */
 #define OPAMP_Input_NonInverting              ((uint32_t)0x00000013) /*!< Non inverting input */
@@ -178,13 +178,13 @@ typedef struct
 #define IS_OPAMP_INPUT(INPUT) (((INPUT) == OPAMP_Input_Inverting) || \
                                ((INPUT) == OPAMP_Input_NonInverting))
 
-/**
-  * @}
-  */ 
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_Vref
-  * @{
-  */
+    /** @defgroup OPAMP_Vref
+      * @{
+      */
 
 #define OPAMP_Vref_3VDDA                    ((uint32_t)0x00000000) /*!< OPMAP Vref = 3.3% VDDA */
 #define OPAMP_Vref_10VDDA                    OPAMP_CSR_CALSEL_0     /*!< OPMAP Vref = 10% VDDA  */
@@ -196,12 +196,12 @@ typedef struct
                              ((VREF) == OPAMP_Vref_50VDDA) || \
                              ((VREF) == OPAMP_Vref_90VDDA))
 
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_Trimming
-  */
+    /** @defgroup OPAMP_Trimming
+      */
 
 #define OPAMP_Trimming_Factory        ((uint32_t)0x00000000) /*!< Factory trimming */
 #define OPAMP_Trimming_User           OPAMP_CSR_USERTRIM     /*!< User trimming */
@@ -209,56 +209,56 @@ typedef struct
 #define IS_OPAMP_TRIMMING(TRIMMING) (((TRIMMING) == OPAMP_Trimming_Factory) || \
                                      ((TRIMMING) == OPAMP_Trimming_User))
 
-/**
-  * @}
-  */ 
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_TrimValue
-  * @{
-  */
+    /** @defgroup OPAMP_TrimValue
+      * @{
+      */
 
 #define IS_OPAMP_TRIMMINGVALUE(VALUE) ((VALUE) <= 0x0000001F) /*!< Trimming value */
 
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/** @defgroup OPAMP_OutputLevel
-  * @{
-  */
+    /** @defgroup OPAMP_OutputLevel
+      * @{
+      */
 
 #define OPAMP_OutputLevel_High                   OPAMP_CSR_OUTCAL
 #define OPAMP_OutputLevel_Low                    ((uint32_t)0x00000000)
 
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+    /* Exported macro ------------------------------------------------------------*/
+    /* Exported functions ------------------------------------------------------- */
 
-/*  Function used to set the OPAMP configuration to the default reset state ***/
-void OPAMP_DeInit(uint32_t OPAMP_Selection);
+    /*  Function used to set the OPAMP configuration to the default reset state ***/
+    void OPAMP_DeInit(uint32_t OPAMP_Selection);
 
-/* Initialization and Configuration functions *********************************/
-void OPAMP_Init(uint32_t OPAMP_Selection, OPAMP_InitTypeDef* OPAMP_InitStruct);
-void OPAMP_StructInit(OPAMP_InitTypeDef* OPAMP_InitStruct);
-void OPAMP_PGAConfig(uint32_t OPAMP_Selection, uint32_t OPAMP_PGAGain, uint32_t OPAMP_PGAConnect);
-void OPAMP_VrefConfig(uint32_t OPAMP_Selection, uint32_t OPAMP_Vref);
-void OPAMP_VrefConnectADCCmd(uint32_t OPAMP_Selection, FunctionalState NewState);
-void OPAMP_TimerControlledMuxConfig(uint32_t OPAMP_Selection, OPAMP_InitTypeDef* OPAMP_InitStruct);
-void OPAMP_TimerControlledMuxCmd(uint32_t OPAMP_Selection, FunctionalState NewState);
-void OPAMP_Cmd(uint32_t OPAMP_Selection, FunctionalState NewState);
-uint32_t OPAMP_GetOutputLevel(uint32_t OPAMP_Selection);
+    /* Initialization and Configuration functions *********************************/
+    void OPAMP_Init(uint32_t OPAMP_Selection, OPAMP_InitTypeDef* OPAMP_InitStruct);
+    void OPAMP_StructInit(OPAMP_InitTypeDef* OPAMP_InitStruct);
+    void OPAMP_PGAConfig(uint32_t OPAMP_Selection, uint32_t OPAMP_PGAGain, uint32_t OPAMP_PGAConnect);
+    void OPAMP_VrefConfig(uint32_t OPAMP_Selection, uint32_t OPAMP_Vref);
+    void OPAMP_VrefConnectADCCmd(uint32_t OPAMP_Selection, FunctionalState NewState);
+    void OPAMP_TimerControlledMuxConfig(uint32_t OPAMP_Selection, OPAMP_InitTypeDef* OPAMP_InitStruct);
+    void OPAMP_TimerControlledMuxCmd(uint32_t OPAMP_Selection, FunctionalState NewState);
+    void OPAMP_Cmd(uint32_t OPAMP_Selection, FunctionalState NewState);
+    uint32_t OPAMP_GetOutputLevel(uint32_t OPAMP_Selection);
 
-/* Calibration functions ******************************************************/
-void OPAMP_VrefConnectNonInvertingInput(uint32_t OPAMP_Selection, FunctionalState NewState);
-void OPAMP_OffsetTrimModeSelect(uint32_t OPAMP_Selection, uint32_t OPAMP_Trimming);
-void OPAMP_OffsetTrimConfig(uint32_t OPAMP_Selection, uint32_t OPAMP_Input, uint32_t OPAMP_TrimValue);
-void OPAMP_StartCalibration(uint32_t OPAMP_Selection, FunctionalState NewState);
+    /* Calibration functions ******************************************************/
+    void OPAMP_VrefConnectNonInvertingInput(uint32_t OPAMP_Selection, FunctionalState NewState);
+    void OPAMP_OffsetTrimModeSelect(uint32_t OPAMP_Selection, uint32_t OPAMP_Trimming);
+    void OPAMP_OffsetTrimConfig(uint32_t OPAMP_Selection, uint32_t OPAMP_Input, uint32_t OPAMP_TrimValue);
+    void OPAMP_StartCalibration(uint32_t OPAMP_Selection, FunctionalState NewState);
 
-/* OPAMP configuration locking function ***************************************/
-void OPAMP_LockConfig(uint32_t OPAMP_Selection);
+    /* OPAMP configuration locking function ***************************************/
+    void OPAMP_LockConfig(uint32_t OPAMP_Selection);
 
 #ifdef __cplusplus
 }
@@ -268,7 +268,7 @@ void OPAMP_LockConfig(uint32_t OPAMP_Selection);
 
 /**
   * @}
-  */ 
+  */
 
 /**
   * @}

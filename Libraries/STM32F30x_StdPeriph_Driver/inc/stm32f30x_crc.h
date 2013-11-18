@@ -4,7 +4,7 @@
   * @author  MCD Application Team
   * @version V1.0.0
   * @date    04-September-2012
-  * @brief   This file contains all the functions prototypes for the CRC firmware 
+  * @brief   This file contains all the functions prototypes for the CRC firmware
   *          library.
   ******************************************************************************
   * @attention
@@ -17,40 +17,40 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software 
-  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
   *
   ******************************************************************************
-  */ 
+  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __STM32F30x_CRC_H
 #define __STM32F30x_CRC_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-/*!< Includes ----------------------------------------------------------------*/
+    /*!< Includes ----------------------------------------------------------------*/
 #include "stm32f30x.h"
 
-/** @addtogroup STM32F30x_StdPeriph_Driver
-  * @{
-  */
+    /** @addtogroup STM32F30x_StdPeriph_Driver
+      * @{
+      */
 
-/** @addtogroup CRC
-  * @{
-  */
+    /** @addtogroup CRC
+      * @{
+      */
 
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
+    /* Exported types ------------------------------------------------------------*/
+    /* Exported constants --------------------------------------------------------*/
 
-/** @defgroup CRC_ReverseInputData
-  * @{
-  */
+    /** @defgroup CRC_ReverseInputData
+      * @{
+      */
 #define CRC_ReverseInputData_No             ((uint32_t)0x00000000) /*!< No reverse operation of Input Data */
 #define CRC_ReverseInputData_8bits          CRC_CR_REV_IN_0        /*!< Reverse operation of Input Data on 8 bits */
 #define CRC_ReverseInputData_16bits         CRC_CR_REV_IN_1        /*!< Reverse operation of Input Data on 16 bits */
@@ -61,13 +61,13 @@
                                          ((DATA) == CRC_ReverseInputData_16bits) || \
                                          ((DATA) == CRC_ReverseInputData_32bits))
 
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/** @defgroup CRC_PolynomialSize
-  * @{
-  */
+    /** @defgroup CRC_PolynomialSize
+      * @{
+      */
 #define CRC_PolSize_7                       CRC_CR_POLSIZE        /*!< 7-bit polynomial for CRC calculation */
 #define CRC_PolSize_8                       CRC_CR_POLSIZE_1      /*!< 8-bit polynomial for CRC calculation */
 #define CRC_PolSize_16                      CRC_CR_POLSIZE_0      /*!< 16-bit polynomial for CRC calculation */
@@ -78,31 +78,31 @@
                                ((SIZE) == CRC_PolSize_16) || \
                                ((SIZE) == CRC_PolSize_32))
 
-/**
-  * @}
-  */
+    /**
+      * @}
+      */
 
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-/* Configuration of the CRC computation unit **********************************/
-void CRC_DeInit(void);
-void CRC_ResetDR(void);
-void CRC_PolynomialSizeSelect(uint32_t CRC_PolSize); /* Select or Config, which one is the best */
-void CRC_ReverseInputDataSelect(uint32_t CRC_ReverseInputData);
-void CRC_ReverseOutputDataCmd(FunctionalState NewState);
-void CRC_SetInitRegister(uint32_t CRC_InitValue); /* change the function proto to SetInitRemainder() ??? */
-void CRC_SetPolynomial(uint32_t CRC_Pol);
+    /* Exported macro ------------------------------------------------------------*/
+    /* Exported functions ------------------------------------------------------- */
+    /* Configuration of the CRC computation unit **********************************/
+    void CRC_DeInit(void);
+    void CRC_ResetDR(void);
+    void CRC_PolynomialSizeSelect(uint32_t CRC_PolSize); /* Select or Config, which one is the best */
+    void CRC_ReverseInputDataSelect(uint32_t CRC_ReverseInputData);
+    void CRC_ReverseOutputDataCmd(FunctionalState NewState);
+    void CRC_SetInitRegister(uint32_t CRC_InitValue); /* change the function proto to SetInitRemainder() ??? */
+    void CRC_SetPolynomial(uint32_t CRC_Pol);
 
-/* CRC computation ************************************************************/
-uint32_t CRC_CalcCRC(uint32_t CRC_Data);
-uint32_t CRC_CalcCRC16bits(uint16_t CRC_Data);
-uint32_t CRC_CalcCRC8bits(uint8_t CRC_Data);
-uint32_t CRC_CalcBlockCRC(uint32_t pBuffer[], uint32_t BufferLength);
-uint32_t CRC_GetCRC(void);
+    /* CRC computation ************************************************************/
+    uint32_t CRC_CalcCRC(uint32_t CRC_Data);
+    uint32_t CRC_CalcCRC16bits(uint16_t CRC_Data);
+    uint32_t CRC_CalcCRC8bits(uint8_t CRC_Data);
+    uint32_t CRC_CalcBlockCRC(uint32_t pBuffer[], uint32_t BufferLength);
+    uint32_t CRC_GetCRC(void);
 
-/* Independent register (IDR) access (write/read) *****************************/
-void CRC_SetIDRegister(uint8_t CRC_IDValue);
-uint8_t CRC_GetIDRegister(void);
+    /* Independent register (IDR) access (write/read) *****************************/
+    void CRC_SetIDRegister(uint8_t CRC_IDValue);
+    uint8_t CRC_GetIDRegister(void);
 
 #ifdef __cplusplus
 }
