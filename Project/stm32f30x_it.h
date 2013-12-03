@@ -46,10 +46,10 @@ extern "C" {
     void MemManage_Handler(void);
     void BusFault_Handler(void);
     void UsageFault_Handler(void);
-    void SVC_Handler(void);
+    void SVC_Handler(void) __attribute__((weak));
     void DebugMon_Handler(void);
-    void PendSV_Handler(void);
-    void SysTick_Handler(void);
+    void PendSV_Handler(void) __attribute__((weak));
+    void SysTick_Handler(void) __attribute__((weak));
     void EXTI0_IRQHandler(void);
 
     void USB_LP_CAN1_RX0_IRQHandler(void);

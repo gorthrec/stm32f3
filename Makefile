@@ -43,6 +43,13 @@ inc-y += Utilities/STM32F3_Discovery
 src-y += $(wildcard Project/*.c)
 inc-y += Project
 
+# FreeRTOS
+src-y += $(wildcard FreeRTOS/Source/*.c) \
+         FreeRTOS/Source/portable/GCC/ARM_CM3/port.c \
+         FreeRTOS/Source/portable/MemMang/heap_1.c
+inc-y += FreeRTOS/Source/include \
+         FreeRTOS/Source/portable/GCC/ARM_CM3
+
 ################################################################################
 # Compilation flags
 ################################################################################
