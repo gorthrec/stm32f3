@@ -53,8 +53,8 @@
 #define LSM_Acc_Sensitivity_16g    (float)     0.0834f         /*!< accelerometer sensitivity with 12 g full scale [LSB/mg] */
 
 #define mainDONT_BLOCK (0UL)
-#define mainCHECK_TIMER_PERIOD_MS (5000UL / portTICK_RATE_MS)
-#define parseIncomingData_TASK_PRIORITY 
+#define mainCHECK_TIMER_PERIOD_MS (1000UL / portTICK_RATE_MS)
+#define parseIncomingData_TASK_PRIORITY (tskIDLE_PRIORITY + 1)
 
 /* Private variables ---------------------------------------------------------*/
 RCC_ClocksTypeDef RCC_Clocks;
@@ -73,14 +73,17 @@ float fTiltedX,fTiltedY = 0.0f;
 
 uint32_t packet_sent = 1;
 uint32_t packet_receive = 1;
-extern __IO uint8_t Receive_Buffer[64];
-extern __IO uint32_t Receive_length;
+extern uint8_t Receive_Buffer[64];
+extern uint32_t Receive_length;
+
+xQueueHandle xInMessagesQueue = NULL;
+xQueueHandle xOutMessagesQueue = NULL;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 static void prvCheckTimerCallback(xTimerHandle xTimer)
 {
-    STM_EVAL_LEDToggle(LED3);
+    STM_EVAL_LEDToggle(LED4);
 }
 
 static void prvSampleDataTask(void* pvParameters)
@@ -121,26 +124,40 @@ static void prvSampleDataTask(void* pvParameters)
 
 static void prvParseIncomingDataTask( void *pvParameter )
 {
-#if 0
     xTaskHandle xSampleTask = NULL;
-    static uint8_t pucMessage[RECEIVER_BUFFER_SIZE];
+    static uint8_t msg;
 
-    xInMessagesQueue = xQueueCreate(10, sizeof(pucReceiveBuffer));
+
+    xInMessagesQueue = xQueueCreate(64, sizeof(portCHAR));
     /* We want this queue to be viewable in a RTOS kernel aware debugger, so register it. */
     vQueueAddToRegistry(xInMessagesQueue, (signed char *) "InMessages");
 
-    xOutMessagesQueue = xQueueCreate(10, sizeof(portCHAR));
+    xOutMessagesQueue = xQueueCreate(64, sizeof(portCHAR));
     /* We want this queue to be viewable in a RTOS kernel aware debugger, so register it. */
     vQueueAddToRegistry(xOutMessagesQueue, (signed char *) "OutMessages");
 
     /* Configure the USB */
-    //vInitUSB();
-    //vTaskDelay(DELAY);
+    STM_EVAL_LEDOn(LED5);
+    Demo_USB();
+    STM_EVAL_LEDOn(LED6);
+
+    while (1) {
+        vTaskDelay(1000);
+        STM_EVAL_LEDToggle(LED9);
+    }
 
     for (;;) {
         /* wait forever for incoming messages */
-        if (xQueueReceive(xInMessagesQueue, pucMessage, portMAX_DELAY) == pdPASS) {
-            STM_EVAL_LEDOn(LED9);
+        if (xQueueReceive(xInMessagesQueue, &msg, portMAX_DELAY) == pdPASS) {
+            STM_EVAL_LEDToggle(LED9);
+            if (packet_sent == 1) {
+                if (Receive_length > 0) {
+                    CDC_Send_DATA((unsigned char*)Receive_Buffer, Receive_length);
+                    Receive_length = 0;
+                }
+            }
+
+#if 0
             switch (pucMessage[2]) {
             case COMMAND_START:
                 if (xSampleTask == NULL) {
@@ -161,11 +178,11 @@ static void prvParseIncomingDataTask( void *pvParameter )
             default:
                 break;
             }
-        }
-    }
 #endif
+        }
+        vTaskDelay(10);
+    }
 }
-
 
 /*-----------------------------------------------------------*/
 int main(void)
@@ -175,7 +192,7 @@ int main(void)
 
     /* SysTick end of count event each 1ms */
     RCC_GetClocksFreq(&RCC_Clocks);
-    SysTick_Config(RCC_Clocks.HCLK_Frequency / 10);
+    SysTick_Config(RCC_Clocks.HCLK_Frequency / configTICK_RATE_HZ);
 
     /* Ensure all priority bits are assigned as preemption priority bits. */
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -190,10 +207,11 @@ int main(void)
     STM_EVAL_LEDInit(LED9);
     STM_EVAL_LEDInit(LED10);
 
+    STM_EVAL_LEDOn(LED3);
     STM_EVAL_PBInit(BUTTON_USER, BUTTON_MODE_EXTI);
 
     xCheckTimer = xTimerCreate((const signed char *) "CheckTimer",/* A text name, purely to help debugging. */
-                               (mainCHECK_TIMER_PERIOD_MS), /* The timer period, in this case 3000ms (3s). */
+                               (mainCHECK_TIMER_PERIOD_MS), /* The timer period. */
                                pdTRUE, /* This is an auto-reload timer, so xAutoReload is set to pdTRUE. */
                                (void *) 0, /* The ID is not used, so can be set to anything. */
                                prvCheckTimerCallback /* The callback function that inspects the status of all the other tasks. */
@@ -202,14 +220,12 @@ int main(void)
         xTimerStart(xCheckTimer, mainDONT_BLOCK);
     }
 
-    //xTaskCreate(prvParseIncomingDataTask, (signed char *) "ParseIn", configMINIMAL_STACK_SIZE * 2, NULL, parseIncomingData_TASK_PRIORITY, NULL);
+    xTaskCreate(prvParseIncomingDataTask, (signed char *) "ParseIn", configMINIMAL_STACK_SIZE * 2, NULL, parseIncomingData_TASK_PRIORITY, NULL);
+    STM_EVAL_LEDOn(LED7);
 
     /* Start the scheduler */
     vTaskStartScheduler();
     while (1);
-
-    /* Configure the USB */
-    Demo_USB();
 
     while (1) {
         if (bDeviceState == CONFIGURED) {
@@ -517,7 +533,8 @@ void Demo_USB(void)
     USB_Interrupts_Config();
     USB_Init();
 
-    while ((bDeviceState != CONFIGURED) && (USBConnectTimeOut != 0));
+    //while ((bDeviceState != CONFIGURED) && (USBConnectTimeOut != 0));
+    while (bDeviceState != CONFIGURED);
 }
 
 /**

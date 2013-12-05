@@ -110,7 +110,7 @@ void UsageFault_Handler(void)
   * @param  None
   * @retval None
   */
-void SVC_Handler(void)
+void __SVC_Handler(void)
 {
 }
 
@@ -128,7 +128,7 @@ void DebugMon_Handler(void)
   * @param  None
   * @retval None
   */
-void PendSV_Handler(void)
+void __PendSV_Handler(void)
 {
 }
 
@@ -137,7 +137,7 @@ void PendSV_Handler(void)
   * @param  None
   * @retval None
   */
-void SysTick_Handler(void)
+void __SysTick_Handler(void)
 {
     TimingDelay_Decrement();
     USBConnectTimeOut--;

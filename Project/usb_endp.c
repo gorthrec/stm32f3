@@ -33,6 +33,9 @@
 #include "usb_istr.h"
 #include "usb_pwr.h"
 
+#include "FreeRTOS.h"
+#include "queue.h"
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 
@@ -42,8 +45,11 @@
 /* Private variables ---------------------------------------------------------*/
 extern __IO uint32_t packet_sent;
 extern __IO uint32_t packet_receive;
-extern __IO uint8_t Receive_Buffer[64];
+extern uint8_t Receive_Buffer[64];
 uint32_t Receive_length;
+
+extern xQueueHandle xInMessagesQueue;
+extern xQueueHandle xOutMessagesQueue;
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -55,8 +61,11 @@ uint32_t Receive_length;
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
-void EP1_IN_Callback (void)
+void EP1_IN_Callback(void)
 {
+//    UserToPMABufferCopy((unsigned char*)ptrBuffer, ENDP1_TXADDR, Send_length);
+//    SetEPTxCount(ENDP1, Send_length);
+//    SetEPTxValid(ENDP1);
     packet_sent = 1;
 }
 
@@ -69,12 +78,33 @@ void EP1_IN_Callback (void)
 *******************************************************************************/
 void EP3_OUT_Callback(void)
 {
-    packet_receive = 1;
+    int i;
+    char c;
+    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+
     Receive_length = GetEPRxCount(ENDP3);
     PMAToUserBufferCopy((unsigned char*)Receive_Buffer, ENDP3_RXADDR, Receive_length);
 
-    //xQueueSendToBackFromISR(xInMessagesQueue, pucReceiveBuffer, &xHigherPriorityTaskWoken);
-    //xQueueSendToBackFromISR(xInMessagesQueue, Receive_Buffer, &xHigherPriorityTaskWoken);
+    //for (i = 0; i < Receive_length; i++) {
+    //    xQueueSendToBackFromISR(xInMessagesQueue, (void *)&Receive_Buffer[i], &xHigherPriorityTaskWoken);
+    //}
+    //xQueueSendFromISR(xInMessagesQueue, &Receive_Buffer[0], &xHigherPriorityTaskWoken);
+    c = '@';
+    GPIOE->ODR ^= GPIO_Pin_14; /* LED8 */
+    xQueueSendFromISR(xInMessagesQueue, &c, &xHigherPriorityTaskWoken);
+
+    SetEPRxValid(ENDP3);
+    GPIOE->ODR ^= GPIO_Pin_13;
+    //portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+
+    if (xHigherPriorityTaskWoken == pdTRUE) {
+        // Actual macro used here is port specific.
+        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+    }
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+void SOF_Callback(void)
+{
+}
