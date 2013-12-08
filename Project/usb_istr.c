@@ -41,8 +41,8 @@
 /* Private variables ---------------------------------------------------------*/
 __IO uint16_t wIstr;  /* ISTR register last read value */
 __IO uint8_t bIntPackSOF = 0;  /* SOFs received between 2 consecutive packets */
-__IO uint32_t esof_counter =0; /* expected SOF counter */
-__IO uint32_t wCNTR=0;
+__IO uint32_t esof_counter = 0; /* expected SOF counter */
+__IO uint32_t wCNTR = 0;
 
 /* Extern variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/

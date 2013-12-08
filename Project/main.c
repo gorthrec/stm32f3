@@ -32,6 +32,7 @@
 #include "task.h"
 #include "timers.h"
 #include "semphr.h"
+#include "cli.h"
 
 /** @addtogroup STM32F3-Discovery_Demo
   * @{
@@ -60,16 +61,10 @@
 RCC_ClocksTypeDef RCC_Clocks;
 __IO uint32_t TimingDelay = 0;
 __IO uint32_t UserButtonPressed = 0;
-__IO float HeadingValue = 0.0f;
-float MagBuffer[3] = {0.0f}, AccBuffer[3] = {0.0f}, Buffer[3] = {0.0f};
-uint8_t Xval, Yval = 0x00;
 
 __IO uint8_t DataReady = 0;
 __IO uint8_t PrevXferComplete = 1;
 __IO uint32_t USBConnectTimeOut = 100;
-
-float fNormAcc,fSinRoll,fCosRoll,fSinPitch,fCosPitch = 0.0f, RollAng = 0.0f, PitchAng = 0.0f;
-float fTiltedX,fTiltedY = 0.0f;
 
 uint32_t packet_sent = 1;
 uint32_t packet_receive = 1;
@@ -92,34 +87,7 @@ static void prvSampleDataTask(void* pvParameters)
 
     /* Initialise the xLastWakeTime variable with the current time */
     xLastWakeTime = xTaskGetTickCount();
-
-    static float pfMagBuffer[3] = {0.0f};
-    static float pfAccBuffer[3] = {0.0f};
-    static float pfGyroBuffer[3] = {0.0f};
-
-//    vSensorsCompassConfig();
-//    vSensorsGyroConfig();
-
-    STM_EVAL_LEDOn(LED9);
-    for (;;) {
-//        vTaskDelayUntil(&xLastWakeTime, DATA_SAMPLE_DELAY);
-
-//        vSensorsCompassReadAcc(pfAccBuffer);
-//        g_sBoardStatus.lAccelerationX = pfAccBuffer[0];
-//        g_sBoardStatus.lAccelerationY = pfAccBuffer[1];
-//        g_sBoardStatus.lAccelerationZ = pfAccBuffer[2];
-
-//        vSensorsCompassReadMag(pfMagBuffer);
-//        g_sBoardStatus.lMagneticFieldX = pfMagBuffer[0];
-//        g_sBoardStatus.lMagneticFieldY = pfMagBuffer[1];
-//        g_sBoardStatus.lMagneticFieldZ = pfMagBuffer[2];
-
-//        vSensorsGyroReadAngRate(pfGyroBuffer);
-//        g_sBoardStatus.lGyroAngRateX = pfGyroBuffer[0];
-//        g_sBoardStatus.lGyroAngRateY = pfGyroBuffer[1];
-//        g_sBoardStatus.lGyroAngRateZ = pfGyroBuffer[2];
 //        vUsbSerialInterfaceSendRealTimeData();
-    }
 }
 
 static void prvParseIncomingDataTask( void *pvParameter )
@@ -127,61 +95,14 @@ static void prvParseIncomingDataTask( void *pvParameter )
     xTaskHandle xSampleTask = NULL;
     static uint8_t msg;
 
-
-    xInMessagesQueue = xQueueCreate(64, sizeof(portCHAR));
-    /* We want this queue to be viewable in a RTOS kernel aware debugger, so register it. */
-    vQueueAddToRegistry(xInMessagesQueue, (signed char *) "InMessages");
-
-    xOutMessagesQueue = xQueueCreate(64, sizeof(portCHAR));
-    /* We want this queue to be viewable in a RTOS kernel aware debugger, so register it. */
-    vQueueAddToRegistry(xOutMessagesQueue, (signed char *) "OutMessages");
-
     /* Configure the USB */
     STM_EVAL_LEDOn(LED5);
     Demo_USB();
     STM_EVAL_LEDOn(LED6);
 
-    while (1) {
-        vTaskDelay(1000);
-        STM_EVAL_LEDToggle(LED9);
-    }
-
-    for (;;) {
-        /* wait forever for incoming messages */
-        if (xQueueReceive(xInMessagesQueue, &msg, portMAX_DELAY) == pdPASS) {
-            STM_EVAL_LEDToggle(LED9);
-            if (packet_sent == 1) {
-                if (Receive_length > 0) {
-                    CDC_Send_DATA((unsigned char*)Receive_Buffer, Receive_length);
-                    Receive_length = 0;
-                }
-            }
-
-#if 0
-            switch (pucMessage[2]) {
-            case COMMAND_START:
-                if (xSampleTask == NULL) {
-                    xTaskCreate(prvSampleDataTask, (signed char *) "SampleData", configMINIMAL_STACK_SIZE, NULL, parseIncomingData_TASK_PRIORITY, &xSampleTask);
-                }
-                break;
-            case COMMAND_STOP:
-                if (xSampleTask) {
-                    vTaskDelete(xSampleTask);
-                    xSampleTask = NULL;
-                    STM_EVAL_LEDOff(LED10);
-                }
-                break;
-            case COMMAND_SET_PWM_VALUES:
-                //vMotorControlSetPwmValues(prvGetInt32FromDataArray(&(pucMessage[3])), prvGetInt32FromDataArray(&(pucMessage[7])));
-                break;
-            case COMMAND_UNKNOWN:
-            default:
-                break;
-            }
-#endif
-        }
-        vTaskDelay(10);
-    }
+    vTaskDelay(1000);
+    _dprintf("Build: %s %s\r\n", __DATE__, __TIME__);
+    cli_run();
 }
 
 /*-----------------------------------------------------------*/
@@ -220,305 +141,23 @@ int main(void)
         xTimerStart(xCheckTimer, mainDONT_BLOCK);
     }
 
+    xInMessagesQueue = xQueueCreate(256, sizeof(portCHAR));
+    /* We want this queue to be viewable in a RTOS kernel aware debugger, so register it. */
+    vQueueAddToRegistry(xInMessagesQueue, (signed char *) "InMessages");
+
+    xOutMessagesQueue = xQueueCreate(256, sizeof(portCHAR));
+    /* We want this queue to be viewable in a RTOS kernel aware debugger, so register it. */
+    vQueueAddToRegistry(xOutMessagesQueue, (signed char *) "OutMessages");
+
     xTaskCreate(prvParseIncomingDataTask, (signed char *) "ParseIn", configMINIMAL_STACK_SIZE * 2, NULL, parseIncomingData_TASK_PRIORITY, NULL);
-    STM_EVAL_LEDOn(LED7);
+
+    /* Demo Gyroscope */
+    Demo_GyroConfig();
+    /* Demo Compass */
+    Demo_CompassConfig();
 
     /* Start the scheduler */
     vTaskStartScheduler();
-    while (1);
-
-    while (1) {
-        if (bDeviceState == CONFIGURED) {
-            CDC_Receive_DATA();
-            /*Check to see if we have data yet */
-            if (Receive_length != 0) {
-                if (packet_sent == 1) {
-                    CDC_Send_DATA((unsigned char*)Receive_Buffer, Receive_length);
-                    Receive_length = 0;
-                }
-            }
-        }
-    }
-
-
-    /* Reset UserButton_Pressed variable */
-    UserButtonPressed = 0x00;
-
-    /* Infinite loop */
-    while (1) {
-        /* LEDs Off */
-        STM_EVAL_LEDOff(LED3);
-        STM_EVAL_LEDOff(LED6);
-        STM_EVAL_LEDOff(LED7);
-        STM_EVAL_LEDOff(LED4);
-        STM_EVAL_LEDOff(LED10);
-        STM_EVAL_LEDOff(LED8);
-        STM_EVAL_LEDOff(LED9);
-        STM_EVAL_LEDOff(LED5);
-
-        /* Waiting User Button is pressed */
-        while (UserButtonPressed == 0x00) {
-            /* Toggle LD3 */
-            STM_EVAL_LEDToggle(LED3);
-            /* Insert 50 ms delay */
-            Delay(5);
-            /* Toggle LD5 */
-            STM_EVAL_LEDToggle(LED5);
-            /* Insert 50 ms delay */
-            Delay(5);
-            /* Toggle LD7 */
-            STM_EVAL_LEDToggle(LED7);
-            /* Insert 50 ms delay */
-            Delay(5);
-            /* Toggle LD9 */
-            STM_EVAL_LEDToggle(LED9);
-            /* Insert 50 ms delay */
-            Delay(5);
-            /* Toggle LD10 */
-            STM_EVAL_LEDToggle(LED10);
-            /* Insert 50 ms delay */
-            Delay(5);
-            /* Toggle LD8 */
-            STM_EVAL_LEDToggle(LED8);
-            /* Insert 50 ms delay */
-            Delay(5);
-            /* Toggle LD6 */
-            STM_EVAL_LEDToggle(LED6);
-            /* Insert 50 ms delay */
-            Delay(5);
-            /* Toggle LD4 */
-            STM_EVAL_LEDToggle(LED4);
-            /* Insert 50 ms delay */
-            Delay(5);
-        }
-
-        DataReady = 0x00;
-
-        /* All LEDs Off */
-        STM_EVAL_LEDOff(LED3);
-        STM_EVAL_LEDOff(LED6);
-        STM_EVAL_LEDOff(LED7);
-        STM_EVAL_LEDOff(LED4);
-        STM_EVAL_LEDOff(LED10);
-        STM_EVAL_LEDOff(LED8);
-        STM_EVAL_LEDOff(LED9);
-        STM_EVAL_LEDOff(LED5);
-
-        /* Demo Gyroscope */
-        Demo_GyroConfig();
-
-        /* Waiting User Button is pressed */
-        while (UserButtonPressed == 0x01) {
-            /* Wait for data ready */
-            while (DataReady != 0x05);
-            DataReady = 0x00;
-
-            /* LEDs Off */
-            STM_EVAL_LEDOff(LED3);
-            STM_EVAL_LEDOff(LED6);
-            STM_EVAL_LEDOff(LED7);
-            STM_EVAL_LEDOff(LED4);
-            STM_EVAL_LEDOff(LED10);
-            STM_EVAL_LEDOff(LED8);
-            STM_EVAL_LEDOff(LED9);
-            STM_EVAL_LEDOff(LED5);
-
-            /* Read Gyro Angular data */
-            Demo_GyroReadAngRate(Buffer);
-
-            /* Update autoreload and capture compare registers value*/
-            Xval = ABS((int8_t)(Buffer[0]));
-            Yval = ABS((int8_t)(Buffer[1]));
-
-            if (Xval > Yval) {
-                if ((int8_t)Buffer[0] > 5.0f) {
-                    /* LD10 On */
-                    STM_EVAL_LEDOn(LED10);
-                }
-                if ((int8_t)Buffer[0] < -5.0f) {
-                    /* LD3 On */
-                    STM_EVAL_LEDOn(LED3);
-                }
-            } else {
-                if ((int8_t)Buffer[1] < -5.0f) {
-                    /* LD6 on */
-                    STM_EVAL_LEDOn(LED6);
-                }
-                if ((int8_t)Buffer[1] > 5.0f) {
-                    /* LD7 On */
-                    STM_EVAL_LEDOn(LED7);
-                }
-            }
-        }
-
-        DataReady = 0x00;
-
-        /* LEDs Off */
-        STM_EVAL_LEDOff(LED4);
-        STM_EVAL_LEDOff(LED3);
-        STM_EVAL_LEDOff(LED6);
-        STM_EVAL_LEDOff(LED7);
-        STM_EVAL_LEDOff(LED10);
-        STM_EVAL_LEDOff(LED8);
-        STM_EVAL_LEDOff(LED9);
-        STM_EVAL_LEDOff(LED5);
-
-        /* Demo Compass */
-        Demo_CompassConfig();
-
-        /* Waiting User Button is pressed */
-        while (UserButtonPressed == 0x02) {
-            /* Wait for data ready */
-            while (DataReady !=0x05);
-            DataReady = 0x00;
-
-            /* Read Compass data */
-            Demo_CompassReadMag(MagBuffer);
-            Demo_CompassReadAcc(AccBuffer);
-
-            for (i = 0; i < 3; i++) {
-                AccBuffer[i] /= 100.0f;
-            }
-
-            fNormAcc = sqrt((AccBuffer[0] * AccBuffer[0]) + (AccBuffer[1] * AccBuffer[1]) + (AccBuffer[2] * AccBuffer[2]));
-
-            fSinRoll = -AccBuffer[1] / fNormAcc;
-            fCosRoll = sqrt(1.0 - (fSinRoll * fSinRoll));
-            fSinPitch = AccBuffer[0] / fNormAcc;
-            fCosPitch = sqrt(1.0 - (fSinPitch * fSinPitch));
-            if (fSinRoll > 0) {
-                if (fCosRoll > 0) {
-                    RollAng = acos(fCosRoll)*180/PI;
-                } else {
-                    RollAng = acos(fCosRoll)*180/PI + 180;
-                }
-            } else {
-                if (fCosRoll > 0) {
-                    RollAng = acos(fCosRoll) * 180 / PI + 360;
-                } else {
-                    RollAng = acos(fCosRoll) * 180 / PI + 180;
-                }
-            }
-
-            if (fSinPitch > 0) {
-                if (fCosPitch > 0) {
-                    PitchAng = acos(fCosPitch) * 180 / PI;
-                } else {
-                    PitchAng = acos(fCosPitch) * 180 / PI + 180;
-                }
-            } else {
-                if (fCosPitch > 0) {
-                    PitchAng = acos(fCosPitch) * 180 / PI + 360;
-                } else {
-                    PitchAng = acos(fCosPitch) * 180 / PI + 180;
-                }
-            }
-
-            if (RollAng >= 360) {
-                RollAng = RollAng - 360;
-            }
-
-            if (PitchAng >= 360) {
-                PitchAng = PitchAng - 360;
-            }
-
-            fTiltedX = MagBuffer[0] * fCosPitch + MagBuffer[2] * fSinPitch;
-            fTiltedY = MagBuffer[0] * fSinRoll * fSinPitch + MagBuffer[1] * fCosRoll - MagBuffer[1] * fSinRoll * fCosPitch;
-            HeadingValue = (float) ((atan2f((float)fTiltedY, (float)fTiltedX)) * 180) / PI;
-
-            if (HeadingValue < 0) {
-                HeadingValue = HeadingValue + 360;
-            }
-
-            if ((RollAng <= 40.0f) && (PitchAng <= 40.0f)) {
-                if (((HeadingValue < 25.0f) && (HeadingValue >= 0.0f)) || ((HeadingValue >= 340.0f) && (HeadingValue <= 360.0f))) {
-                    STM_EVAL_LEDOn(LED10);
-                    STM_EVAL_LEDOff(LED3);
-                    STM_EVAL_LEDOff(LED6);
-                    STM_EVAL_LEDOff(LED7);
-                    STM_EVAL_LEDOff(LED4);
-                    STM_EVAL_LEDOff(LED8);
-                    STM_EVAL_LEDOff(LED9);
-                    STM_EVAL_LEDOff(LED5);
-                } else if ((HeadingValue < 70.0f) && (HeadingValue >= 25.0f)) {
-                    STM_EVAL_LEDOn(LED9);
-                    STM_EVAL_LEDOff(LED6);
-                    STM_EVAL_LEDOff(LED10);
-                    STM_EVAL_LEDOff(LED3);
-                    STM_EVAL_LEDOff(LED8);
-                    STM_EVAL_LEDOff(LED5);
-                    STM_EVAL_LEDOff(LED4);
-                    STM_EVAL_LEDOff(LED7);
-                } else if ((HeadingValue < 115.0f) && (HeadingValue >= 70.0f)) {
-                    STM_EVAL_LEDOn(LED7);
-                    STM_EVAL_LEDOff(LED3);
-                    STM_EVAL_LEDOff(LED4);
-                    STM_EVAL_LEDOff(LED9);
-                    STM_EVAL_LEDOff(LED10);
-                    STM_EVAL_LEDOff(LED8);
-                    STM_EVAL_LEDOff(LED6);
-                    STM_EVAL_LEDOff(LED5);
-                } else if ((HeadingValue < 160.0f) && (HeadingValue >= 115.0f)) {
-                    STM_EVAL_LEDOn(LED5);
-                    STM_EVAL_LEDOff(LED6);
-                    STM_EVAL_LEDOff(LED10);
-                    STM_EVAL_LEDOff(LED8);
-                    STM_EVAL_LEDOff(LED9);
-                    STM_EVAL_LEDOff(LED7);
-                    STM_EVAL_LEDOff(LED4);
-                    STM_EVAL_LEDOff(LED3);
-                } else if ((HeadingValue < 205.0f) && (HeadingValue >= 160.0f)) {
-                    STM_EVAL_LEDOn(LED3);
-                    STM_EVAL_LEDOff(LED6);
-                    STM_EVAL_LEDOff(LED4);
-                    STM_EVAL_LEDOff(LED8);
-                    STM_EVAL_LEDOff(LED9);
-                    STM_EVAL_LEDOff(LED5);
-                    STM_EVAL_LEDOff(LED10);
-                    STM_EVAL_LEDOff(LED7);
-                } else if ((HeadingValue < 250.0f) && (HeadingValue >= 205.0f)) {
-                    STM_EVAL_LEDOn(LED4);
-                    STM_EVAL_LEDOff(LED6);
-                    STM_EVAL_LEDOff(LED10);
-                    STM_EVAL_LEDOff(LED8);
-                    STM_EVAL_LEDOff(LED9);
-                    STM_EVAL_LEDOff(LED5);
-                    STM_EVAL_LEDOff(LED3);
-                    STM_EVAL_LEDOff(LED7);
-                } else if ((HeadingValue < 295.0f) && (HeadingValue >= 250.0f)) {
-                    STM_EVAL_LEDOn(LED6);
-                    STM_EVAL_LEDOff(LED9);
-                    STM_EVAL_LEDOff(LED10);
-                    STM_EVAL_LEDOff(LED8);
-                    STM_EVAL_LEDOff(LED3);
-                    STM_EVAL_LEDOff(LED5);
-                    STM_EVAL_LEDOff(LED4);
-                    STM_EVAL_LEDOff(LED7);
-                } else if ((HeadingValue < 340.0f) && (HeadingValue >= 295.0f)) {
-                    STM_EVAL_LEDOn(LED8);
-                    STM_EVAL_LEDOff(LED6);
-                    STM_EVAL_LEDOff(LED10);
-                    STM_EVAL_LEDOff(LED7);
-                    STM_EVAL_LEDOff(LED9);
-                    STM_EVAL_LEDOff(LED3);
-                    STM_EVAL_LEDOff(LED4);
-                    STM_EVAL_LEDOff(LED5);
-                }
-            } else {
-                /* Toggle All LEDs */
-                STM_EVAL_LEDToggle(LED7);
-                STM_EVAL_LEDToggle(LED6);
-                STM_EVAL_LEDToggle(LED10);
-                STM_EVAL_LEDToggle(LED8);
-                STM_EVAL_LEDToggle(LED9);
-                STM_EVAL_LEDToggle(LED3);
-                STM_EVAL_LEDToggle(LED4);
-                STM_EVAL_LEDToggle(LED5);
-                /* Delay 50ms */
-                Delay(5);
-            }
-        }
-    }
 }
 
 /**
@@ -719,7 +358,7 @@ void Demo_CompassReadAcc(float* pfData)
 * @param  pfData: pointer to the data out
   * @retval None
   */
-void Demo_CompassReadMag (float* pfData)
+void Demo_CompassReadMag(float* pfData)
 {
     static uint8_t buffer[6] = {0};
     uint8_t CTRLB = 0;

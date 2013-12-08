@@ -48,7 +48,7 @@ struct {
     __IO uint8_t bESOFcnt;
 } ResumeS;
 
-__IO uint32_t remotewakeupon=0;
+__IO uint32_t remotewakeupon = 0;
 
 /* Extern variables ----------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -77,7 +77,8 @@ RESULT PowerOn(void)
     /*** Clear pending interrupts ***/
     _SetISTR(0);
     /*** Set interrupt mask ***/
-    wInterrupt_Mask = CNTR_RESETM | CNTR_SUSPM | CNTR_WKUPM;
+    //wInterrupt_Mask = CNTR_RESETM | CNTR_SUSPM | CNTR_WKUPM;
+    wInterrupt_Mask = CNTR_RESETM | CNTR_WKUPM;
     _SetCNTR(wInterrupt_Mask);
 
     return USB_SUCCESS;

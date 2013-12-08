@@ -51,6 +51,8 @@ uint32_t Receive_length;
 extern xQueueHandle xInMessagesQueue;
 extern xQueueHandle xOutMessagesQueue;
 
+uint8_t USB_Tx_state = 0;
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -63,10 +65,25 @@ extern xQueueHandle xOutMessagesQueue;
 *******************************************************************************/
 void EP1_IN_Callback(void)
 {
-//    UserToPMABufferCopy((unsigned char*)ptrBuffer, ENDP1_TXADDR, Send_length);
-//    SetEPTxCount(ENDP1, Send_length);
-//    SetEPTxValid(ENDP1);
-    packet_sent = 1;
+    char buffer[VIRTUAL_COM_PORT_DATA_SIZE];
+    int length = 0;
+
+    if (USB_Tx_state == 1) {
+        while (xQueueReceiveFromISR(xOutMessagesQueue, &buffer[length], 0) == pdPASS) {
+            length++;
+            if (length == VIRTUAL_COM_PORT_DATA_SIZE) {
+                break;
+            }
+        }
+
+        if (length > 0) {
+            UserToPMABufferCopy((unsigned char*)buffer, ENDP1_TXADDR, length);
+            SetEPTxCount(ENDP1, length);
+            SetEPTxValid(ENDP1);
+        } else {
+            USB_Tx_state = 0;
+        }
+    }
 }
 
 /*******************************************************************************
@@ -80,31 +97,40 @@ void EP3_OUT_Callback(void)
 {
     int i;
     char c;
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
 
     Receive_length = GetEPRxCount(ENDP3);
     PMAToUserBufferCopy((unsigned char*)Receive_Buffer, ENDP3_RXADDR, Receive_length);
 
-    //for (i = 0; i < Receive_length; i++) {
-    //    xQueueSendToBackFromISR(xInMessagesQueue, (void *)&Receive_Buffer[i], &xHigherPriorityTaskWoken);
-    //}
-    //xQueueSendFromISR(xInMessagesQueue, &Receive_Buffer[0], &xHigherPriorityTaskWoken);
-    c = '@';
-    GPIOE->ODR ^= GPIO_Pin_14; /* LED8 */
-    xQueueSendFromISR(xInMessagesQueue, &c, &xHigherPriorityTaskWoken);
+    for (i = 0; i < Receive_length; i++) {
+        //xQueueSendFromISR(xInMessagesQueue, &Receive_Buffer[i], &xHigherPriorityTaskWoken);
+        xQueueSendFromISR(xInMessagesQueue, &Receive_Buffer[i], 0);
+    }
 
     SetEPRxValid(ENDP3);
-    GPIOE->ODR ^= GPIO_Pin_13;
-    //portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
-
-    if (xHigherPriorityTaskWoken == pdTRUE) {
-        // Actual macro used here is port specific.
-        portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    }
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
+#ifdef SOF_CALLBACK
 void SOF_Callback(void)
 {
+    char buffer[VIRTUAL_COM_PORT_DATA_SIZE];
+    int length = 0;
+    //portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+
+    if (USB_Tx_state != 1) {
+        USB_Tx_state = 0;
+        while (xQueueReceiveFromISR(xOutMessagesQueue, &buffer[length], 0) == pdPASS) {
+            length++;
+            if (length == VIRTUAL_COM_PORT_DATA_SIZE) {
+                break;
+            }
+        }
+
+        if (length > 0) {
+            UserToPMABufferCopy((unsigned char*)buffer, ENDP1_TXADDR, length);
+            SetEPTxCount(ENDP1, length);
+            SetEPTxValid(ENDP1);
+            USB_Tx_state = 1;
+        }
+    }
 }
+#endif

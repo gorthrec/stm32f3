@@ -32,6 +32,8 @@
 #include "main.h"
 #include "usb_istr.h"
 
+#include "FreeRTOS.h"
+
 /** @addtogroup STM32F3-Discovery_Demo
   * @{
   */
