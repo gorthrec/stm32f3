@@ -1,4 +1,6 @@
 #include "main.h"
+#include "ad9851.h"
+#include "sinwave.h"
 
 #define MAX_LINE_LENGTH 256
 #define PROMPT "cli> "
@@ -35,6 +37,7 @@ void do_gyro(char *args);
 void do_pio(char *args);
 void do_dds(char *args);
 void do_dds_scan(char *args);
+void do_sin(char *args);
 
 command_list_t commands[] = {
     {"help", do_help, "Print help"},
@@ -48,6 +51,7 @@ command_list_t commands[] = {
     {"pio", do_pio, "Set GPIO <port> <value>"},
     {"dds", do_dds, "Set DDS frequency <frequency>"},
     {"ddsscan", do_dds_scan, "Automatic frequency change"},
+    {"sin", do_sin, "Get/set sinus mesh <slot> <frequency>"},
     {"\0", NULL, "\0"}
 };
 
