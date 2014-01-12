@@ -33,6 +33,8 @@ void do_poke(char *args);
 void do_accelerometer(char *str);
 void do_gyro(char *args);
 void do_pio(char *args);
+void do_dds(char *args);
+void do_dds_scan(char *args);
 
 command_list_t commands[] = {
     {"help", do_help, "Print help"},
@@ -44,6 +46,8 @@ command_list_t commands[] = {
     {"acc", do_accelerometer, "Read accelerometer"},
     {"gyro", do_gyro, "Read gyro"},
     {"pio", do_pio, "Set GPIO <port> <value>"},
+    {"dds", do_dds, "Set DDS frequency <frequency>"},
+    {"ddsscan", do_dds_scan, "Automatic frequency change"},
     {"\0", NULL, "\0"}
 };
 
@@ -154,6 +158,25 @@ int _atoi(char *str)
             n = (n << 4) | (*str - 'a' + 10);
         } else if ((*str >= 'A') && (*str <= 'F')) {
             n = (n << 4) | (*str - 'A' + 10);
+        } else {
+            return n;
+        }
+        str++;
+    }
+    return n;
+}
+
+int _atoid(char *str)
+{
+    int n = 0;
+
+    if (!str) {
+        return -1;
+    }
+
+    while (*str) {
+        if ((*str >= '0') && (*str <= '9')) {
+            n = (n * 10) + (*str - '0');
         } else {
             return n;
         }
@@ -287,5 +310,25 @@ void do_pio(char *args)
         STM_EVAL_LEDOn(gpio);
     } else {
         STM_EVAL_LEDOff(gpio);
+    }
+}
+
+void do_dds(char *args)
+{
+    int frequency = _atoid(_strtok(NULL, " ,.-"));
+    int phase = _atoid(_strtok(NULL, " ,.-"));
+
+    _dprintf("Set DDS frequency to %dHz, phase: %ddeg\r\n", frequency, phase);
+    ad9851_set(frequency, phase);
+}
+
+void do_dds_scan(char *args)
+{
+    int i;
+
+    while (1) {
+        for (i = 1; i <= 60; i++) {
+            ad9851_set(i * 1e6, 0);
+        }
     }
 }
