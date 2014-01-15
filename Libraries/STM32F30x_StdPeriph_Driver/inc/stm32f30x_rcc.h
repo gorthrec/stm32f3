@@ -2,9 +2,9 @@
   ******************************************************************************
   * @file    stm32f30x_rcc.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    04-September-2012
-  * @brief   This file contains all the functions prototypes for the RCC
+  * @version V1.0.1
+  * @date    23-October-2012
+  * @brief   This file contains all the functions prototypes for the RCC 
   *          firmware library.
   ******************************************************************************
   * @attention
@@ -17,8 +17,8 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -31,50 +31,50 @@
 #define __STM32F30x_RCC_H
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
-    /* Includes ------------------------------------------------------------------*/
+/* Includes ------------------------------------------------------------------*/
 #include "stm32f30x.h"
 
-    /** @addtogroup STM32F30x_StdPeriph_Driver
-      * @{
-      */
+/** @addtogroup STM32F30x_StdPeriph_Driver
+  * @{
+  */
 
-    /** @addtogroup RCC
-      * @{
-      */
+/** @addtogroup RCC
+  * @{
+  */
 
-    /* Exported types ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
 
-    typedef struct
-    {
-        uint32_t SYSCLK_Frequency;
-        uint32_t HCLK_Frequency;
-        uint32_t PCLK1_Frequency;
-        uint32_t PCLK2_Frequency;
-        uint32_t ADC12CLK_Frequency;
-        uint32_t ADC34CLK_Frequency;
-        uint32_t I2C1CLK_Frequency;
-        uint32_t I2C2CLK_Frequency;
-        uint32_t TIM1CLK_Frequency;
-        uint32_t TIM8CLK_Frequency;
-        uint32_t USART1CLK_Frequency;
-        uint32_t USART2CLK_Frequency;
-        uint32_t USART3CLK_Frequency;
-        uint32_t UART4CLK_Frequency;
-        uint32_t UART5CLK_Frequency;
-    } RCC_ClocksTypeDef;
+typedef struct
+{
+  uint32_t SYSCLK_Frequency;
+  uint32_t HCLK_Frequency;
+  uint32_t PCLK1_Frequency;
+  uint32_t PCLK2_Frequency;
+  uint32_t ADC12CLK_Frequency;
+  uint32_t ADC34CLK_Frequency;
+  uint32_t I2C1CLK_Frequency;
+  uint32_t I2C2CLK_Frequency;
+  uint32_t TIM1CLK_Frequency;
+  uint32_t TIM8CLK_Frequency;
+  uint32_t USART1CLK_Frequency;
+  uint32_t USART2CLK_Frequency;
+  uint32_t USART3CLK_Frequency;
+  uint32_t UART4CLK_Frequency;
+  uint32_t UART5CLK_Frequency;  
+}RCC_ClocksTypeDef;
 
-    /* Exported constants --------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
 
-    /** @defgroup RCC_Exported_Constants
-      * @{
-      */
+/** @defgroup RCC_Exported_Constants
+  * @{
+  */
 
-    /** @defgroup RCC_HSE_configuration
-      * @{
-      */
+/** @defgroup RCC_HSE_configuration 
+  * @{
+  */
 
 #define RCC_HSE_OFF                      ((uint8_t)0x00)
 #define RCC_HSE_ON                       ((uint8_t)0x01)
@@ -82,26 +82,26 @@ extern "C" {
 #define IS_RCC_HSE(HSE) (((HSE) == RCC_HSE_OFF) || ((HSE) == RCC_HSE_ON) || \
                          ((HSE) == RCC_HSE_Bypass))
 
-    /**
-      * @}
-      */
-
-    /** @defgroup RCC_PLL_Clock_Source
-      * @{
-      */
+/**
+  * @}
+  */ 
+ 
+/** @defgroup RCC_PLL_Clock_Source 
+  * @{
+  */
 
 #define RCC_PLLSource_HSI_Div2           RCC_CFGR_PLLSRC_HSI_Div2
 #define RCC_PLLSource_PREDIV1            RCC_CFGR_PLLSRC_PREDIV1
-
+ 
 #define IS_RCC_PLL_SOURCE(SOURCE) (((SOURCE) == RCC_PLLSource_HSI_Div2) || \
                                    ((SOURCE) == RCC_PLLSource_PREDIV1))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */ 
 
-    /** @defgroup RCC_PLL_Multiplication_Factor
-      * @{
-      */
+/** @defgroup RCC_PLL_Multiplication_Factor 
+  * @{
+  */
 
 #define RCC_PLLMul_2                    RCC_CFGR_PLLMULL2
 #define RCC_PLLMul_3                    RCC_CFGR_PLLMULL3
@@ -126,13 +126,13 @@ extern "C" {
                              ((MUL) == RCC_PLLMul_12) || ((MUL) == RCC_PLLMul_13) || \
                              ((MUL) == RCC_PLLMul_14) || ((MUL) == RCC_PLLMul_15) || \
                              ((MUL) == RCC_PLLMul_16))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_PREDIV1_division_factor
-      * @{
-      */
+/** @defgroup RCC_PREDIV1_division_factor
+  * @{
+  */
 #define  RCC_PREDIV1_Div1               RCC_CFGR2_PREDIV1_DIV1
 #define  RCC_PREDIV1_Div2               RCC_CFGR2_PREDIV1_DIV2
 #define  RCC_PREDIV1_Div3               RCC_CFGR2_PREDIV1_DIV3
@@ -158,13 +158,13 @@ extern "C" {
                                  ((PREDIV1) == RCC_PREDIV1_Div11) || ((PREDIV1) == RCC_PREDIV1_Div12) || \
                                  ((PREDIV1) == RCC_PREDIV1_Div13) || ((PREDIV1) == RCC_PREDIV1_Div14) || \
                                  ((PREDIV1) == RCC_PREDIV1_Div15) || ((PREDIV1) == RCC_PREDIV1_Div16))
-    /**
-      * @}
-      */
-
-    /** @defgroup RCC_System_Clock_Source
-      * @{
-      */
+/**
+  * @}
+  */ 
+ 
+/** @defgroup RCC_System_Clock_Source 
+  * @{
+  */
 
 #define RCC_SYSCLKSource_HSI             RCC_CFGR_SW_HSI
 #define RCC_SYSCLKSource_HSE             RCC_CFGR_SW_HSE
@@ -172,13 +172,13 @@ extern "C" {
 #define IS_RCC_SYSCLK_SOURCE(SOURCE) (((SOURCE) == RCC_SYSCLKSource_HSI) || \
                                       ((SOURCE) == RCC_SYSCLKSource_HSE) || \
                                       ((SOURCE) == RCC_SYSCLKSource_PLLCLK))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_AHB_Clock_Source
-      * @{
-      */
+/** @defgroup RCC_AHB_Clock_Source
+  * @{
+  */
 
 #define RCC_SYSCLK_Div1                  RCC_CFGR_HPRE_DIV1
 #define RCC_SYSCLK_Div2                  RCC_CFGR_HPRE_DIV2
@@ -194,13 +194,13 @@ extern "C" {
                            ((HCLK) == RCC_SYSCLK_Div16) || ((HCLK) == RCC_SYSCLK_Div64) || \
                            ((HCLK) == RCC_SYSCLK_Div128) || ((HCLK) == RCC_SYSCLK_Div256) || \
                            ((HCLK) == RCC_SYSCLK_Div512))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */ 
 
-    /** @defgroup RCC_APB1_APB2_clock_source
-      * @{
-      */
+/** @defgroup RCC_APB1_APB2_clock_source 
+  * @{
+  */
 
 #define RCC_HCLK_Div1                    ((uint32_t)0x00000000)
 #define RCC_HCLK_Div2                    ((uint32_t)0x00000400)
@@ -210,15 +210,15 @@ extern "C" {
 #define IS_RCC_PCLK(PCLK) (((PCLK) == RCC_HCLK_Div1) || ((PCLK) == RCC_HCLK_Div2) || \
                            ((PCLK) == RCC_HCLK_Div4) || ((PCLK) == RCC_HCLK_Div8) || \
                            ((PCLK) == RCC_HCLK_Div16))
-    /**
-      * @}
-      */
-
-    /** @defgroup RCC_ADC_clock_source
-      * @{
-      */
-
-    /* ADC1 & ADC2 */
+/**
+  * @}
+  */
+  
+/** @defgroup RCC_ADC_clock_source 
+  * @{
+  */
+  
+/* ADC1 & ADC2 */
 #define RCC_ADC12PLLCLK_OFF                    ((uint32_t)0x00000000)
 #define RCC_ADC12PLLCLK_Div1                   ((uint32_t)0x00000100)
 #define RCC_ADC12PLLCLK_Div2                   ((uint32_t)0x00000110)
@@ -233,7 +233,7 @@ extern "C" {
 #define RCC_ADC12PLLCLK_Div128                 ((uint32_t)0x000001A0)
 #define RCC_ADC12PLLCLK_Div256                 ((uint32_t)0x000001B0)
 
-    /* ADC3 & ADC4 */
+/* ADC3 & ADC4 */
 #define RCC_ADC34PLLCLK_OFF                    ((uint32_t)0x10000000)
 #define RCC_ADC34PLLCLK_Div1                   ((uint32_t)0x10002000)
 #define RCC_ADC34PLLCLK_Div2                   ((uint32_t)0x10002200)
@@ -262,13 +262,13 @@ extern "C" {
                                ((ADCCLK) == RCC_ADC34PLLCLK_Div32) || ((ADCCLK) == RCC_ADC34PLLCLK_Div64) || \
                                ((ADCCLK) == RCC_ADC34PLLCLK_Div128) || ((ADCCLK) == RCC_ADC34PLLCLK_Div256))
 
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_TIM_clock_source
-      * @{
-      */
+/** @defgroup RCC_TIM_clock_source 
+  * @{
+  */
 
 #define RCC_TIM1CLK_HCLK                  ((uint32_t)0x00000000)
 #define RCC_TIM1CLK_PLLCLK                RCC_CFGR3_TIM1SW
@@ -279,13 +279,13 @@ extern "C" {
 #define IS_RCC_TIMCLK(TIMCLK) (((TIMCLK) == RCC_TIM1CLK_HCLK) || ((TIMCLK) == RCC_TIM1CLK_PLLCLK) || \
                                ((TIMCLK) == RCC_TIM8CLK_HCLK) || ((TIMCLK) == RCC_TIM8CLK_PLLCLK))
 
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_I2C_clock_source
-      * @{
-      */
+/** @defgroup RCC_I2C_clock_source 
+  * @{
+  */
 
 #define RCC_I2C1CLK_HSI                   ((uint32_t)0x00000000)
 #define RCC_I2C1CLK_SYSCLK                RCC_CFGR3_I2C1SW
@@ -296,13 +296,13 @@ extern "C" {
 #define IS_RCC_I2CCLK(I2CCLK) (((I2CCLK) == RCC_I2C1CLK_HSI) || ((I2CCLK) == RCC_I2C1CLK_SYSCLK) || \
                                ((I2CCLK) == RCC_I2C2CLK_HSI) || ((I2CCLK) == RCC_I2C2CLK_SYSCLK))
 
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_USART_clock_source
-      * @{
-      */
+/** @defgroup RCC_USART_clock_source 
+  * @{
+  */
 
 #define RCC_USART1CLK_PCLK                  ((uint32_t)0x10000000)
 #define RCC_USART1CLK_SYSCLK                ((uint32_t)0x10000001)
@@ -340,13 +340,13 @@ extern "C" {
                                    ((USARTCLK) == RCC_UART5CLK_PCLK) || ((USARTCLK) == RCC_UART5CLK_SYSCLK) || \
                                    ((USARTCLK) == RCC_UART5CLK_LSE) || ((USARTCLK) == RCC_UART5CLK_HSI))
 
-    /**
-      * @}
-      */
-
-    /** @defgroup RCC_Interrupt_Source
-      * @{
-      */
+/**
+  * @}
+  */
+       
+/** @defgroup RCC_Interrupt_Source 
+  * @{
+  */
 
 #define RCC_IT_LSIRDY                    ((uint8_t)0x01)
 #define RCC_IT_LSERDY                    ((uint8_t)0x02)
@@ -360,30 +360,30 @@ extern "C" {
 #define IS_RCC_GET_IT(IT) (((IT) == RCC_IT_LSIRDY) || ((IT) == RCC_IT_LSERDY) || \
                            ((IT) == RCC_IT_HSIRDY) || ((IT) == RCC_IT_HSERDY) || \
                            ((IT) == RCC_IT_PLLRDY) || ((IT) == RCC_IT_CSS))
-
+                           
 
 #define IS_RCC_CLEAR_IT(IT) ((((IT) & (uint8_t)0x40) == 0x00) && ((IT) != 0x00))
 
-    /**
-      * @}
-      */
-
-    /** @defgroup RCC_LSE_configuration
-      * @{
-      */
+/**
+  * @}
+  */
+  
+/** @defgroup RCC_LSE_configuration 
+  * @{
+  */
 
 #define RCC_LSE_OFF                      ((uint32_t)0x00000000)
 #define RCC_LSE_ON                       RCC_BDCR_LSEON
 #define RCC_LSE_Bypass                   ((uint32_t)(RCC_BDCR_LSEON | RCC_BDCR_LSEBYP))
 #define IS_RCC_LSE(LSE) (((LSE) == RCC_LSE_OFF) || ((LSE) == RCC_LSE_ON) || \
                          ((LSE) == RCC_LSE_Bypass))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_RTC_Clock_Source
-      * @{
-      */
+/** @defgroup RCC_RTC_Clock_Source
+  * @{
+  */
 
 #define RCC_RTCCLKSource_LSE             RCC_BDCR_RTCSEL_LSE
 #define RCC_RTCCLKSource_LSI             RCC_BDCR_RTCSEL_LSI
@@ -392,21 +392,21 @@ extern "C" {
 #define IS_RCC_RTCCLK_SOURCE(SOURCE) (((SOURCE) == RCC_RTCCLKSource_LSE) || \
                                       ((SOURCE) == RCC_RTCCLKSource_LSI) || \
                                       ((SOURCE) == RCC_RTCCLKSource_HSE_Div32))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_I2S_Clock_Source
-      * @{
-      */
+/** @defgroup RCC_I2S_Clock_Source
+  * @{
+  */
 #define RCC_I2S2CLKSource_SYSCLK             ((uint8_t)0x00)
 #define RCC_I2S2CLKSource_Ext                ((uint8_t)0x01)
 
-#define IS_RCC_I2SCLK_SOURCE(SOURCE) (((SOURCE) == RCC_I2S2CLKSource_SYSCLK) || ((SOURCE) == RCC_I2S2CLKSource_Ext))
+#define IS_RCC_I2SCLK_SOURCE(SOURCE) (((SOURCE) == RCC_I2S2CLKSource_SYSCLK) || ((SOURCE) == RCC_I2S2CLKSource_Ext)) 
 
-    /** @defgroup RCC_LSE_Drive_Configuration
-      * @{
-      */
+/** @defgroup RCC_LSE_Drive_Configuration 
+  * @{
+  */
 
 #define RCC_LSEDrive_Low                 ((uint32_t)0x00000000)
 #define RCC_LSEDrive_MediumLow           RCC_BDCR_LSEDRV_0
@@ -414,13 +414,13 @@ extern "C" {
 #define RCC_LSEDrive_High                RCC_BDCR_LSEDRV
 #define IS_RCC_LSE_DRIVE(DRIVE) (((DRIVE) == RCC_LSEDrive_Low) || ((DRIVE) == RCC_LSEDrive_MediumLow) || \
                                  ((DRIVE) == RCC_LSEDrive_MediumHigh) || ((DRIVE) == RCC_LSEDrive_High))
-    /**
-      * @}
-      */
-
-    /** @defgroup RCC_AHB_Peripherals
-      * @{
-      */
+/**
+  * @}
+  */
+  
+/** @defgroup RCC_AHB_Peripherals 
+  * @{
+  */
 
 #define RCC_AHBPeriph_ADC34               RCC_AHBENR_ADC34EN
 #define RCC_AHBPeriph_ADC12               RCC_AHBENR_ADC12EN
@@ -440,13 +440,13 @@ extern "C" {
 #define IS_RCC_AHB_PERIPH(PERIPH) ((((PERIPH) & 0xCE81FFA8) == 0x00) && ((PERIPH) != 0x00))
 #define IS_RCC_AHB_RST_PERIPH(PERIPH) ((((PERIPH) & 0xCE81FFFF) == 0x00) && ((PERIPH) != 0x00))
 
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_APB2_Peripherals
-      * @{
-      */
+/** @defgroup RCC_APB2_Peripherals 
+  * @{
+  */
 
 #define RCC_APB2Periph_SYSCFG            ((uint32_t)0x00000001)
 #define RCC_APB2Periph_TIM1              ((uint32_t)0x00000800)
@@ -459,13 +459,13 @@ extern "C" {
 
 #define IS_RCC_APB2_PERIPH(PERIPH) ((((PERIPH) & 0xFFF887FE) == 0x00) && ((PERIPH) != 0x00))
 
-    /**
-      * @}
-      */
+/**
+  * @}
+  */ 
 
-    /** @defgroup RCC_APB1_Peripherals
-      * @{
-      */
+/** @defgroup RCC_APB1_Peripherals 
+  * @{
+  */
 #define RCC_APB1Periph_TIM2              ((uint32_t)0x00000001)
 #define RCC_APB1Periph_TIM3              ((uint32_t)0x00000002)
 #define RCC_APB1Periph_TIM4              ((uint32_t)0x00000004)
@@ -486,13 +486,13 @@ extern "C" {
 #define RCC_APB1Periph_DAC               ((uint32_t)0x20000000)
 
 #define IS_RCC_APB1_PERIPH(PERIPH) ((((PERIPH) & 0xCD0137C8) == 0x00) && ((PERIPH) != 0x00))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_MCO_Clock_Source
-      * @{
-      */
+/** @defgroup RCC_MCO_Clock_Source
+  * @{
+  */
 
 #define RCC_MCOSource_NoClock            ((uint8_t)0x00)
 #define RCC_MCOSource_LSI                ((uint8_t)0x02)
@@ -506,26 +506,26 @@ extern "C" {
                                     ((SOURCE) == RCC_MCOSource_HSI)  || ((SOURCE) == RCC_MCOSource_HSE) || \
                                     ((SOURCE) == RCC_MCOSource_LSI)  || ((SOURCE) == RCC_MCOSource_LSE) || \
                                     ((SOURCE) == RCC_MCOSource_PLLCLK_Div2))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */ 
 
-    /** @defgroup RCC_USB_Device_clock_source
-      * @{
-      */
+/** @defgroup RCC_USB_Device_clock_source 
+  * @{
+  */
 
-#define RCC_USBCLKSource_PLLCLK_1Div5   ((uint8_t)0x00)
-#define RCC_USBCLKSource_PLLCLK_Div1    ((uint8_t)0x01)
+ #define RCC_USBCLKSource_PLLCLK_1Div5   ((uint8_t)0x00)
+ #define RCC_USBCLKSource_PLLCLK_Div1    ((uint8_t)0x01)
 
-#define IS_RCC_USBCLK_SOURCE(SOURCE) (((SOURCE) == RCC_USBCLKSource_PLLCLK_1Div5) || \
+ #define IS_RCC_USBCLK_SOURCE(SOURCE) (((SOURCE) == RCC_USBCLKSource_PLLCLK_1Div5) || \
                                       ((SOURCE) == RCC_USBCLKSource_PLLCLK_Div1))
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /** @defgroup RCC_Flag
-      * @{
-      */
+/** @defgroup RCC_Flag 
+  * @{
+  */
 #define RCC_FLAG_HSIRDY                  ((uint8_t)0x01)
 #define RCC_FLAG_HSERDY                  ((uint8_t)0x11)
 #define RCC_FLAG_PLLRDY                  ((uint8_t)0x19)
@@ -550,68 +550,68 @@ extern "C" {
 
 #define IS_RCC_HSI_CALIBRATION_VALUE(VALUE) ((VALUE) <= 0x1F)
 
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /**
-      * @}
-      */
+/**
+  * @}
+  */
 
-    /* Exported macro ------------------------------------------------------------*/
-    /* Exported functions ------------------------------------------------------- */
+/* Exported macro ------------------------------------------------------------*/
+/* Exported functions ------------------------------------------------------- */
 
-    /* Function used to set the RCC clock configuration to the default reset state */
-    void RCC_DeInit(void);
+/* Function used to set the RCC clock configuration to the default reset state */
+void RCC_DeInit(void);
 
-    /* Internal/external clocks, PLL, CSS and MCO configuration functions *********/
-    void RCC_HSEConfig(uint8_t RCC_HSE);
-    ErrorStatus RCC_WaitForHSEStartUp(void);
-    void RCC_AdjustHSICalibrationValue(uint8_t HSICalibrationValue);
-    void RCC_HSICmd(FunctionalState NewState);
-    void RCC_LSEConfig(uint32_t RCC_LSE);
-    void RCC_LSEDriveConfig(uint32_t RCC_LSEDrive);
-    void RCC_LSICmd(FunctionalState NewState);
-    void RCC_PLLConfig(uint32_t RCC_PLLSource, uint32_t RCC_PLLMul);
-    void RCC_PLLCmd(FunctionalState NewState);
-    void RCC_PREDIV1Config(uint32_t RCC_PREDIV1_Div);
-    void RCC_ClockSecuritySystemCmd(FunctionalState NewState);
-    void RCC_MCOConfig(uint8_t RCC_MCOSource);
+/* Internal/external clocks, PLL, CSS and MCO configuration functions *********/
+void RCC_HSEConfig(uint8_t RCC_HSE);
+ErrorStatus RCC_WaitForHSEStartUp(void);
+void RCC_AdjustHSICalibrationValue(uint8_t HSICalibrationValue);
+void RCC_HSICmd(FunctionalState NewState);
+void RCC_LSEConfig(uint32_t RCC_LSE);
+void RCC_LSEDriveConfig(uint32_t RCC_LSEDrive);
+void RCC_LSICmd(FunctionalState NewState);
+void RCC_PLLConfig(uint32_t RCC_PLLSource, uint32_t RCC_PLLMul);
+void RCC_PLLCmd(FunctionalState NewState);
+void RCC_PREDIV1Config(uint32_t RCC_PREDIV1_Div);
+void RCC_ClockSecuritySystemCmd(FunctionalState NewState);
+void RCC_MCOConfig(uint8_t RCC_MCOSource);
 
-    /* System, AHB and APB busses clocks configuration functions ******************/
-    void RCC_SYSCLKConfig(uint32_t RCC_SYSCLKSource);
-    uint8_t RCC_GetSYSCLKSource(void);
-    void RCC_HCLKConfig(uint32_t RCC_SYSCLK);
-    void RCC_PCLK1Config(uint32_t RCC_HCLK);
-    void RCC_PCLK2Config(uint32_t RCC_HCLK);
-    void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks);
+/* System, AHB and APB busses clocks configuration functions ******************/
+void RCC_SYSCLKConfig(uint32_t RCC_SYSCLKSource);
+uint8_t RCC_GetSYSCLKSource(void);
+void RCC_HCLKConfig(uint32_t RCC_SYSCLK);
+void RCC_PCLK1Config(uint32_t RCC_HCLK);
+void RCC_PCLK2Config(uint32_t RCC_HCLK);
+void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks);
 
-    /* Peripheral clocks configuration functions **********************************/
-    void RCC_ADCCLKConfig(uint32_t RCC_PLLCLK);
-    void RCC_I2CCLKConfig(uint32_t RCC_I2CCLK);
-    void RCC_TIMCLKConfig(uint32_t RCC_TIMCLK);
-    void RCC_I2SCLKConfig(uint32_t RCC_I2SCLKSource);
-    void RCC_USARTCLKConfig(uint32_t RCC_USARTCLK);
-    void RCC_USBCLKConfig(uint32_t RCC_USBCLKSource);
+/* Peripheral clocks configuration functions **********************************/
+void RCC_ADCCLKConfig(uint32_t RCC_PLLCLK);
+void RCC_I2CCLKConfig(uint32_t RCC_I2CCLK);
+void RCC_TIMCLKConfig(uint32_t RCC_TIMCLK);
+void RCC_I2SCLKConfig(uint32_t RCC_I2SCLKSource); 
+void RCC_USARTCLKConfig(uint32_t RCC_USARTCLK);
+void RCC_USBCLKConfig(uint32_t RCC_USBCLKSource);
 
-    void RCC_RTCCLKConfig(uint32_t RCC_RTCCLKSource);
-    void RCC_RTCCLKCmd(FunctionalState NewState);
-    void RCC_BackupResetCmd(FunctionalState NewState);
+void RCC_RTCCLKConfig(uint32_t RCC_RTCCLKSource);
+void RCC_RTCCLKCmd(FunctionalState NewState);
+void RCC_BackupResetCmd(FunctionalState NewState);
 
-    void RCC_AHBPeriphClockCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState);
-    void RCC_APB2PeriphClockCmd(uint32_t RCC_APB2Periph, FunctionalState NewState);
-    void RCC_APB1PeriphClockCmd(uint32_t RCC_APB1Periph, FunctionalState NewState);
+void RCC_AHBPeriphClockCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState);
+void RCC_APB2PeriphClockCmd(uint32_t RCC_APB2Periph, FunctionalState NewState);
+void RCC_APB1PeriphClockCmd(uint32_t RCC_APB1Periph, FunctionalState NewState);
 
-    void RCC_AHBPeriphResetCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState);
-    void RCC_APB2PeriphResetCmd(uint32_t RCC_APB2Periph, FunctionalState NewState);
-    void RCC_APB1PeriphResetCmd(uint32_t RCC_APB1Periph, FunctionalState NewState);
+void RCC_AHBPeriphResetCmd(uint32_t RCC_AHBPeriph, FunctionalState NewState);
+void RCC_APB2PeriphResetCmd(uint32_t RCC_APB2Periph, FunctionalState NewState);
+void RCC_APB1PeriphResetCmd(uint32_t RCC_APB1Periph, FunctionalState NewState);
 
-    /* Interrupts and flags management functions **********************************/
-    void RCC_ITConfig(uint8_t RCC_IT, FunctionalState NewState);
-    FlagStatus RCC_GetFlagStatus(uint8_t RCC_FLAG);
-    void RCC_ClearFlag(void);
-    ITStatus RCC_GetITStatus(uint8_t RCC_IT);
-    void RCC_ClearITPendingBit(uint8_t RCC_IT);
+/* Interrupts and flags management functions **********************************/
+void RCC_ITConfig(uint8_t RCC_IT, FunctionalState NewState);
+FlagStatus RCC_GetFlagStatus(uint8_t RCC_FLAG);
+void RCC_ClearFlag(void);
+ITStatus RCC_GetITStatus(uint8_t RCC_IT);
+void RCC_ClearITPendingBit(uint8_t RCC_IT);
 
 #ifdef __cplusplus
 }
@@ -625,6 +625,6 @@ extern "C" {
 
 /**
   * @}
-  */
+  */ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

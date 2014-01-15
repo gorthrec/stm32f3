@@ -1,6 +1,7 @@
 #include "main.h"
 #include "ad9851.h"
 #include "sinwave.h"
+#include "rotary_switch.h"
 
 #define MAX_LINE_LENGTH 256
 #define PROMPT "cli> "
@@ -38,6 +39,7 @@ void do_pio(char *args);
 void do_dds(char *args);
 void do_dds_scan(char *args);
 void do_sin(char *args);
+void do_roto(char *args);
 
 command_list_t commands[] = {
     {"help", do_help, "Print help"},
@@ -52,6 +54,7 @@ command_list_t commands[] = {
     {"dds", do_dds, "Set DDS frequency <frequency>"},
     {"ddsscan", do_dds_scan, "Automatic frequency change"},
     {"sin", do_sin, "Get/set sinus mesh <slot> <frequency>"},
+    {"roto", do_roto, "Get rotary position"},
     {"\0", NULL, "\0"}
 };
 
@@ -335,4 +338,9 @@ void do_dds_scan(char *args)
             ad9851_set(i * 1e6, 0);
         }
     }
+}
+
+void do_roto(char *args)
+{
+    _dprintf("pos: %d\r\n", rotary_get());
 }
